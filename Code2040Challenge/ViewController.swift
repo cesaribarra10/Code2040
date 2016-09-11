@@ -29,11 +29,10 @@ class ViewController: UIViewController {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        let jsonData: [String:AnyObject] = [
-            "token":"http://challenge.code2040.org/api/register" as AnyObject,
-            "github":"https://github.com/cesaribarra10/Code2040" as AnyObject
+        let jsonData: [String:String] = [
+            "token":"feb11791f036dc3f2ea5c1f39e41df63",
+            "github":"https://github.com/cesaribarra10/Code2040"
         ]
-        
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: jsonData, options: .prettyPrinted)
         } catch {
@@ -41,14 +40,11 @@ class ViewController: UIViewController {
         }
         let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
             if error == nil {
-                print("YAY")
                 guard let responseReceived = response as? HTTPURLResponse else {return}
                 print(responseReceived)
             }
         }
-        task.resume()
-        print("hello")
-        
+        task.resume()        
     }
 
 }
