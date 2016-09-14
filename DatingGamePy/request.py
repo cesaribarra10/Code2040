@@ -7,23 +7,32 @@ headers = {
 	'json':'Accept',
 	'json':'Content-Type'
 }
-r = requests.post('http://challenge.code2040.org/api/dating', data={'token':'feb11791f036dc3f2ea5c1f39e41df63'}, headers = headers)
-if r.status_code == 200:
-	token = "feb11791f036dc3f2ea5c1f39e41df63"
-	print('The status code was 200')
-	jsonReceived = json.loads(r.content)
+
+def make_network_request(url, data, headers):
+	request = requests.post(url, data=data, headers=headers)
+	return request
+
+def parse_data_return_str(request):
+	jsonReceived = json.loads(request.content)
 	date = jsonReceived['datestamp']
 	interval = jsonReceived['interval']
-	print(date)
-	print(interval)
-	parsedDate = iso.parse_date(date)
-	print(parsedDate)
-	dateToPost = parsedDate + timedelta(seconds=interval)
-	print(dateToPost)
-	stringDate = str(dateToPost)
-	strD = stringDate.replace('+00:00', 'Z')
-	strSend = strD.replace(' ', 'T')
-	print(strSend)
-	dataToSend = {'token':token, 'datestamp':strSend}
-	post = requests.post('http://challenge.code2040.org/api/dating/validate', data = dataToSend, headers = headers)
-	print(post.status_code)
+	parsed_date = iso.parse_date(date)
+	date_with_interval = parsed_date + timedelta(seconds=interval)
+	date_as_str = str(date_with_interval)
+	fixed_string = date_as_str.replace('+00:00', 'Z')
+	fixed_string = fixed_string.replace(' ', 'T')
+	return fixed_string
+
+
+
+
+
+
+dating_url = 'http://challenge.code2040.org/api/dating'
+data_dictionary = {'token':'feb11791f036dc3f2ea5c1f39e41df63'}
+get_request = make_network_request(dating_url, data=data_dictionary, headers=headers)
+date_to_post = parse_data_return_str(get_request)
+data_dictionary = {'token':'feb11791f036dc3f2ea5c1f39e41df63', 'datestamp':date_to_post}
+validate_url = 'http://challenge.code2040.org/api/dating/validate'
+post_request = make_network_request(validate_url, data=data_dictionary, headers=headers)
+print(post_request.status_code)
